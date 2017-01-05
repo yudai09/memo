@@ -1,0 +1,53 @@
+# kubernetesをインストール
+
+kubeadmでインストール
+http://kubernetes.io/docs/getting-started-guides/kubeadm/
+
+
+
+```
+[root@host1 ~]# systemctl disable firewalld
+Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+Removed symlink /etc/systemd/system/basic.target.wants/firewalld.service.
+[root@host1 ~]# systemctl stop firewalld
+```
+
+flannelを使う場合は`--pod-network-cider`を付与せよとのことだったので、付与した。
+
+```
+[root@host1 ~]# kubeadm init --pod-network-cidr=10.244.0.0/16
+[kubeadm] WARNING: kubeadm is in alpha, please do not use it for production clusters.
+[preflight] Running pre-flight checks
+[preflight] Starting the kubelet service
+[init] Using Kubernetes version: v1.5.1
+[tokens] Generated token: "8c6032.9c346c45b50e519c"
+[certificates] Generated Certificate Authority key and certificate.
+[certificates] Generated API Server key and certificate
+[certificates] Generated Service Account signing keys
+[certificates] Created keys and certificates in "/etc/kubernetes/pki"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/kubelet.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/admin.conf"
+[apiclient] Created API client, waiting for the control plane to become ready
+[apiclient] All control plane components are healthy after 20.531908 seconds
+[apiclient] Waiting for at least one node to register and become ready
+[apiclient] First node is ready after 2.501989 seconds
+[apiclient] Creating a test deployment
+[apiclient] Test deployment succeeded
+[token-discovery] Created the kube-discovery deployment, waiting for it to become ready
+[token-discovery] kube-discovery is ready after 2.502074 seconds
+[addons] Created essential addon: kube-proxy
+[addons] Created essential addon: kube-dns
+
+Your Kubernetes master has initialized successfully!
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+    http://kubernetes.io/docs/admin/addons/
+
+You can now join any number of machines by running the following on each node:
+
+kubeadm join --token=8c6032.9c346c45b50e519c 10.0.2.15
+```
+kubeadmはαリリースらしいので、本番では使うなということらしい。
+
+中で何をやったのかはkubeadmなしで構築しないとわからないな。
