@@ -48,6 +48,14 @@
     - https://cloud.google.com/container-engine/
     - だいたい以下の記事からわかるはず
      - [Google Container Engine (GKE) を触ってみた](http://dev.classmethod.jp/cloud/gke-ataglance/)
+ - [ ] kubernetesとflannelがどんなKVをetcdに登録しているのか知りたい。
+  - flannelが参照するKVとkubernetesが参照するKVは協調しているはずなのだが。
+ - [ ] Docker SwarmとGoogle Kubernetes比較を読む
+  - http://www.creationline.com/lab/13762
+  - Swarmの方がかなりよく見えている。（Docker社が評価を依頼しているので当たり前だが）
+ - [ ] Docker Swarmのmulti-host networkingについて理解する。
+  - https://docs.docker.com/engine/userguide/networking/get-started-overlay/
+ - [ ] 実践編として社内で作成している通知ツールを構築する上で使いたい。
 ---
 用語整理
 

@@ -16,3 +16,10 @@ VMをクローニングする場合は設定でMACアドレスを変更しない
 -> activate a connection
   enp0s3をactivateすれば通信できるようになる。
 ```
+
+# vagrantでやりたいな
+[参考Qiita](http://qiita.com/ozawan/items/160728f7c6b10c73b97e)
+こっちのほうが綺麗にポンポン立ち上げられて良いと思う。
+
+上でやったようなこと(MACの変更、ethの有効化)とホスト名付与等の初期構築まで自動的にやりたい。VM内の変更も可能っぽい。[参考Qiita](http://qiita.com/murachi1208/items/00c3c2fe51763a6535f8)
+ホスト名はランダムにしちゃってもいいと思う。いちいち書き換えるのがめんどくさいので。
