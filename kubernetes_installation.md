@@ -157,7 +157,5 @@ FLANNEL_ETCD_PREFIX="/atomic.io/network"
 
 Vagrantでホスト再作成を自動化しておきリトライ
 
-tokenが当然変わる。
-```
-kubeadm join --token=1b0170.2cf595fd13a55de3 10.0.2.15
-```
+よくわからんけど、Kubeadmはetcdをコンテナとして作成するからつなげ方が難しいとかなのか？？
+有無よくわからんけどkubeadmはいろいろ隠蔽してしまってよくわからないので他の方法でやることにする。

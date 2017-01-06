@@ -57,7 +57,7 @@
   - https://docs.docker.com/engine/userguide/networking/get-started-overlay/
  - [ ] 実践編として社内で作成している通知ツールを構築する上で使いたい。
  - [ ] [さくらのナレッジ](http://knowledge.sakura.ad.jp/tech/3681/)だとetcdがmasterの1台だけで動いているのだが、これでいいのだろうか。etcdを冗長化しない場合に壊れたらどうなる？？
-       
+
 ---
 用語整理
 
