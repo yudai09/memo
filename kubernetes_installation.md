@@ -1,5 +1,19 @@
 # kubernetesをインストール
 
+### firewalldの停止
+
+あとで警告が出るので止めておく。
+```
+# systemctl disable firewalld && systemctl stop firewalld
+```
+
+### selinuxの停止
+
+```
+# sed -i 's|^SELINUX=.*$|SELINUX=permissive|' /etc/sysconfig/selinux
+# reboot
+
+```
 kubeadmでインストール
 http://kubernetes.io/docs/getting-started-guides/kubeadm/
 
@@ -8,15 +22,21 @@ http://kubernetes.io/docs/getting-started-guides/kubeadm/
 ### (1/4) Installing kubelet and kubeadm on your hosts
 
 説明の通り実行
-
-### firewalldの停止
-
-あとで警告が出るので止めておく。
 ```
-[root@host1 ~]# systemctl disable firewalld
-Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
-Removed symlink /etc/systemd/system/basic.target.wants/firewalld.service.
-[root@host1 ~]# systemctl stop firewalld
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+setenforce 0
+yum install -y docker kubelet kubeadm kubectl kubernetes-cni
+systemctl enable docker && systemctl start docker
+systemctl enable kubelet && systemctl start kubelet
 ```
 
 ### (2/4) Initializing your master
@@ -132,3 +152,12 @@ FLANNEL_ETCD_PREFIX="/atomic.io/network"
 
 だがそれでもうまく行かない。
 とりあえずホストを再起動したらもっとひどい感じになったので、また明日頑張る。
+
+# 2016-01-06
+
+Vagrantでホスト再作成を自動化しておきリトライ
+
+tokenが当然変わる。
+```
+kubeadm join --token=1b0170.2cf595fd13a55de3 10.0.2.15
+```
