@@ -1,5 +1,9 @@
 # kubernetesをインストール
 
+参照: http://knowledge.sakura.ad.jp/tech/3681/
+
+## master node
+
 ### firewalldの停止
 
 あとで警告が出るので止めておく。
@@ -12,8 +16,173 @@
 ```
 # sed -i 's|^SELINUX=.*$|SELINUX=permissive|' /etc/sysconfig/selinux
 # reboot
+```
+
+### /etc/hosts
 
 ```
+cat >> /etc/hosts << EOF
+172.28.128.11 host1
+172.28.128.12 host2
+172.28.128.13 host3
+EOF
+```
+
+### etcd, kubernetes, flannel install
+
+```
+# yum install etcd kubernetes flannel -y
+```
+### etcd
+
+```
+# sed -i.orig 's|ETCD_LISTEN_CLIENT_URLS=.*|ETCD_LISTEN_CLIENT_URLS="http://host1:2379,http://localhost:2379"|' /etc/etcd/etcd.conf
+# systemctl start etcd
+```
+
+### flanneld
+
+```
+virtualboxのhost-only-networksはeth1なので、そちらから通信させるようにする。
+# sed -i.orig 's|FLANNEL_OPTIONS=.*|FLANNEL_OPTIONS="--iface=eth1"|' /etc/sysconfig/flanneld
+
+# grep FLANNEL_ETCD_PREFIX /etc/sysconfig/flanneld
+FLANNEL_ETCD_PREFIX="/atomic.io/network"
+
+# etcdctl mk /atomic.io/network/config '{"Network":"10.244.0.0/16"}'
+# systemctl start flanneld
+```
+
+### 鍵作成
+
+```
+# openssl genrsa -out /etc/kubernetes/serviceaccount.key 2048
+```
+
+### kubernetes install
+
+```
+# sed -i.orig 's|KUBE_API_ARGS=.*|KUBE_API_ARGS="--service_account_key_file=/etc/kubernetes/serviceaccount.key"|' /etc/kubernetes/apiserver
+# sed -i 's|KUBE_API_ADDRESS=.*|KUBE_API_ADDRESS="--insecure-bind-address=0.0.0.0"|' /etc/kubernetes/apiserver
+# sed -i.orig 's|KUBE_CONTROLLER_MANAGER_ARGS=.*|KUBE_CONTROLLER_MANAGER_ARGS="--service_account_private_key_file=/etc/kubernetes/serviceaccount.key"|' /etc/kubernetes/controller-manager
+
+```
+
+```
+# systemctl start kube-apiserver
+# systemctl start kube-controller-manager
+# systemctl start kube-scheduler
+# systemctl start kube-proxy
+```
+
+### kubectl setup
+
+rootではない他のユーザで実行
+```
+$ kubectl config set-credentials myself --username=admin --password=amdin
+$ kubectl config set-cluster local-server --server=http://host1:8080
+$ kubectl config set-context default-context --cluster=local-server --user=myself
+$ kubectl config use-context default-context
+$ kubectl config set contexts.default-context.namespace default
+```
+
+## slave node
+
+### firewalldの停止
+
+あとで警告が出るので止めておく。
+```
+# systemctl disable firewalld && systemctl stop firewalld
+```
+
+### selinuxの停止
+
+```
+# sed -i 's|^SELINUX=.*$|SELINUX=permissive|' /etc/sysconfig/selinux
+# reboot
+```
+
+### /etc/hosts
+
+```
+# cat >> /etc/hosts << EOF
+172.28.128.11 host1
+172.28.128.12 host2
+172.28.128.13 host3
+EOF
+```
+
+## docker, kubernetes, flannel install
+
+```
+# yum install docker kubernetes flannel -y
+```
+
+### flannel setup
+
+```
+# sed -i.orig 's|FLANNEL_ETCD_ENDPOINTS=.*|FLANNEL_ETCD_ENDPOINTS=http://host1:2379|' /etc/sysconfig/flanneld
+# sed -i 's|FLANNEL_OPTIONS=.*|FLANNEL_OPTIONS="--iface=eth1"|' /etc/sysconfig/flanneld
+# systemctl start flanneld
+```
+
+overlay networkが作成されたことを確認する。
+
+```
+# ip a l
+
+4: flannel0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1472 qdisc pfifo_fast state UNKNOWN qlen 500
+    link/none
+    inet 10.244.52.0/16 scope global flannel0
+       valid_lft forever preferred_lft forever
+
+```
+
+### docker start
+
+```
+# systemctl start docker
+```
+
+### kubernetesの設定
+
+```
+# sed -i.orig 's|KUBE_MASTER=.*|KUBE_MASTER="--master=http://host1:8080"|' /etc/kubernetes/config
+
+# sed -i.orig 's|KUBELET_ADDRESS=.*|KUBELET_ADDRESS="--address=172.28.128.12"|' /etc/kubernetes/kubelet
+# sed -i 's|KUBELET_HOSTNAME=.*|KUBELET_HOSTNAME="--hostname_override="|' /etc/kubernetes/kubelet
+# sed -i 's|KUBELET_API_SERVER=.*|KUBELET_API_SERVER="--api-servers=http://host1:8080"|' /etc/kubernetes/kubelet
+
+# systemctl start kube-proxy
+# systemctl start kubelet
+```
+
+### kubectrl
+
+rootではない他のユーザで実行
+```
+$ kubectl config set-credentials myself --username=admin --password=amdin
+$ kubectl config set-cluster local-server --server=http://host1:8080
+$ kubectl config set-context default-context --cluster=local-server --user=myself
+$ kubectl config use-context default-context
+$ kubectl config set contexts.default-context.namespace default
+```
+
+### nodeが追加されたか確認
+
+```
+# kubectl get nodes
+```
+
+
+### 宿題
+
+serviceを作ったけど、他のノードからどうやってアクセスすればよいのかわからない。
+あと `kubectl exec POD` が使えない理由も不明。 `kube-dns` が必要なんだろうか。
+
+
+# 以下ボツ
+
 kubeadmでインストール
 http://kubernetes.io/docs/getting-started-guides/kubeadm/
 

@@ -47,29 +47,40 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "centos/7"
-  config.vm.network "private_network", type: "dhcp"
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "1024"
   end
   config.vm.define "server1" do |server1|
     server1.vm.hostname = "server1"
+    server1.vm.network :private_network, ip:"172.28.128.13", virtualbox__intnet: "vboxnet1"
   end
 
   config.vm.define "server2" do |server2|
     server2.vm.hostname = "server2"
+    server2.vm.network :private_network, ip:"172.28.128.13", virtualbox__intnet: "vboxnet1"
+  end
+
+  config.vm.define "server3" do |server3|
+    server3.vm.hostname = "server3"
+    server3.vm.network :private_network, ip:"172.28.128.13", virtualbox__intnet: "vboxnet1"
   end
 end
 ```
 
-これで2台のＶＭが生成される。
+これで3台のＶＭが生成される。
 
 ```
 $ vagrant up --provider virtualbox
 ```
 
 ログインするには以下のようにすると、それぞれのサーバにログインできる。
+virtualbox側でvboxnet1というhost-only-networkを作成しておき、DHCPを無効にしておく必要がある。
+DHCPが有効だとIPを固定にした場合にうまくIPが割当たらないようだ。
+それでも起動したては`ifup eth1`しないとIPがとれていない状態だった。よくわからん。
+
 
 ```
 $ vagrant ssh server1
 $ vagrant ssh server2
+$ vagrant ssh server3
 ```
