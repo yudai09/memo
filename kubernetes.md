@@ -31,8 +31,10 @@
   - ingressについて調べる
    - http://kubernetes.io/docs/user-guide/ingress/
    - 冒頭だけよんだ。外部ネットワークをkuberntesクラスタへ引き込むためのものっぽい。
-- [ ] Docker実践ガイドを読みとく
+- [x] Docker実践ガイドを読みとく
  - Kubernetesが何を隠蔽しているのかを正確に理解するため。
+ - だいたい読んだ。Docker Swarmにはマルチホストのネットワーク機能がない?
+ - あとホストへのスケジューリングの方法がいまいちわからない。
 - [ ] Docker Swarmを理解する。
  - https://docs.docker.com/engine/userguide/networking/get-started-overlay/
 - [ ] kubernetesを実際に動かす
