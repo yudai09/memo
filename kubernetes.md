@@ -35,6 +35,10 @@
  - Kubernetesが何を隠蔽しているのかを正確に理解するため。
  - だいたい読んだ。Docker Swarmにはマルチホストのネットワーク機能がない?
  - あとホストへのスケジューリングの方法がいまいちわからない。
+ - swarmにもネットワーク機能はある。外部はingress、内部はembbed DNSによるラウンドロビン。
+  - https://hd35468.wordpress.com/2016/06/27/docker-loadbalancer/
+   - ラウンドロビンはヘルスチェックで外したりできるか検証が必要だな。
+   - ingressの設定は全てのnodeからバランシングができるらしいが、逆に特定のホストだけにしたいとかできるんだろうか？
 - [ ] Docker Swarmを理解する。
  - https://docs.docker.com/engine/userguide/networking/get-started-overlay/
 - [ ] kubernetesを実際に動かす
