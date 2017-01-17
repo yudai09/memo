@@ -9,8 +9,8 @@ tasks.sv_gareraをdigした結果のIPを並べたものを起動オプション
 
 ## 参照先
 
-http://galeracluster.com/2015/05/getting-started-galera-with-docker-part-1/
-http://galeracluster.com/documentation-webpages/docker.html
+* http://galeracluster.com/2015/05/getting-started-galera-with-docker-part-1/
+* http://galeracluster.com/documentation-webpages/docker.html
 作り方は簡単そうだなぁ。
 
 ### Docker Machineで3台のノードを構築して検証環境を作る
