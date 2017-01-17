@@ -52,9 +52,11 @@ This node joined a swarm as a worker.
 docker@galera-1:~$ docker network create nw_galera --driver overlay
 
 kawhbt1bn4566ey4m8vm677xc
+```
 
 ### galeraの最初のノードと残りのノードx3をたてる
 
+```
 docker@galera-1:~$ docker service create --name sv_galera_initnode \
 --reserve-memory 100m \
 --replicas 1 \
