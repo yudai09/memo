@@ -1,34 +1,18 @@
 # docker swarmを試す
 
-## 試したいこと
+## 第一回目
 
-・Serviceを使って外部からの接続をルーティングしたい
-・embbed DNSで内部のルーティングをしたい
-・ingressを使ってみたい。
+docker-swarmの環境構築
 
-https://hd35468.wordpress.com/2016/06/27/docker-loadbalancer/
+以下の環境を構築する。
+作業ＰＣ： Ubuntu
+ハイパーバイザー： virtualbox
+VM: manager node x1, worker node x2
+
+参考：
 https://docs.docker.com/engine/swarm/
-
-## 準備
-
-まずは読み解く。
-
-https://docs.docker.com/engine/swarm/
-tutorialでは1台のmanagerノードと2台のワーカーノードで構成されるものを作っている。
-不足している情報
-* ディスカバリバックエンドとしてのetcdの関わりがわからないこと
- * etcdはどこに立てればいいのか？そもそも必須なのか？
-* 内部の通信がどのようにバランシングされるかわからないこと
- *
-
-
-##
-
-* docker-machineをインストールする。
-* discovery backendをたてる
 
 ## installation
-
 
 ### docker-machineを公式の案内する方法にしたがってインストール
 
@@ -50,18 +34,22 @@ https://docs.docker.com/engine/reference/commandline/swarm_join_token/
 
 ### manager node x1, worker node x2 を立てる
 
+```
 $ docker-machine create -d virtualbox manager
 $ docker-machine create -d virtualbox worker1
 $ docker-machine create -d virtualbox worker2
+```
 
 これでvirtualbox上に3台のVMが構築される。
 ちなみにOSはboot2docker.isoから作成される専用のLinuxが入っているようだ。
 
 IPは自動的にふられたので固定できていない気がするが、以下のようになった。
 
+```
 manager: eth0->10.0.2.15, eth1->192.168.99.101
 worker1: eth0->10.0.2.15, eth1->192.168.99.102
 worker2: eth0->10.0.2.15, eth1->192.168.99.103
+```
 
 eth0はvirtualboxのNATでInternetにつながっている状態。
 eth1は連番でそれぞれのnodeで異なるIPが付与されている。
