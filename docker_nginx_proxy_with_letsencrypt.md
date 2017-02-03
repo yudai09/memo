@@ -223,7 +223,7 @@ events {
 
 http {
     server {
-        listen 443 default ssl;
+        listen 8443 default ssl;
         ssl on;
         ssl_certificate /usr/local/nginx/conf/cert/redmine.grandeur09.com/cert.pem;
         ssl_certificate_key /usr/local/nginx/conf/cert/redmine.grandeur09.com/privkey.pem;
@@ -239,7 +239,7 @@ $ docker build -f ./Dockerfile -t proxy_redmine --no-cache=true .
 serviceを消してから作り直し
 
 $ docker service rm sv_proxy_redmine
-$ docker service create --name sv_proxy_redmine --reserve-memory 100m --mode global --network nw_galera -p 8443:443 -p 8080:8080 proxy_redmine
+$ docker service create --name sv_proxy_redmine --reserve-memory 100m --mode global --network nw_galera -p 8443:8443 -p 8080:8080 proxy_redmine
 ```
 
 これで無事作ることができた。
