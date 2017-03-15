@@ -42,7 +42,11 @@ http://qiita.com/setouchi/items/b3a78cb396ae6e58b84b
 dockerhost001 $ sudo mkdir -p /usr/local/share/letsencrypt/etc/
 dockerhost001 $ sudo mkdir -p /usr/local/share/letsencrypt/var/
 
-dockerhost001 $ docker run -it --rm -p 443:443 --name letsencrypt -v "/usr/local/share/letsencrypt/etc/:/etc/letsencrypt" -v "/usr/local/share/letsencrypt/var/:/var/lib/letsencrypt" quay.io/letsencrypt/letsencrypt:latest certonly
+dockerhost001 $ docker run -it --rm -p 443:443 --name letsencrypt \
+-v "/usr/local/share/letsencrypt/etc/:/etc/letsencrypt" \
+-v "/usr/local/share/letsencrypt/var/:/var/lib/letsencrypt" \
+quay.io/letsencrypt/letsencrypt:latest certonly
+
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
 Failed to find apache2ctl in PATH: /opt/certbot/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 

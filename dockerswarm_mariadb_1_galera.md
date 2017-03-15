@@ -202,3 +202,46 @@ mysql> show databases;
 +--------------------+
 4 rows in set (0.00 sec)
 ```
+
+### sv_galera_initnodeをなくす
+
+sv_galera_initnodeはそれ自体が初期化されてしまうと、新規で作成されるDBがその初期化されたDBを元にクラスタリングされてしまい、クラスタの分断が起きてしまう。
+init_nodeなしに構築する方法を考えた。
+
+まずはとりあえず、クラスタに一台入れる。
+```
+$ docker service create --name sv_galera \
+--reserve-memory 100m \
+--replicas 1 \
+--network nw_galera \
+erkules/galera:basic --wsrep-cluster-name=dbcluster
+```
+
+1台のサーバのIPを知るためにadhocなコンテナを作る。
+```
+$ docker service create --name sv_adhoc \
+--mode global \
+--network nw_galera \
+alpine tail -f /dev/null
+```
+
+わざわざサービスを立てるのが面倒くさい。
+https://docs.docker.com/docker-cloud/apps/service-links/#discovering-containers-on-the-same-service-or-stack
+
+スタックを理解すれば普通のコンテナからみえないかな。
+
+スタックとはnw_galeraのことかな。
+# dig sv_galera.nw_galera +short                                                                                                                                  
+172.28.0.7
+
+ここに回答がある？？
+
+https://github.com/docker/docker/issues/24362
+
+```
+I'm closing this issue, because this is possible with the above instructions, but we'll be looking into enhancing this for 1.13
+```
+
+1.13にすると解決する模様。
+あとでやってみる。docker-ceのedgeで1.13をインストールできるかなと思ったが出来なかった。
+落ち着いたタイミングでやろう。
